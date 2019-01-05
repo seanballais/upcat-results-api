@@ -10,3 +10,9 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# Ignore config file
+config/config.go
+
+# Ignore binary.
+upcat-results-api
