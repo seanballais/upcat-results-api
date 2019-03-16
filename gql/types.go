@@ -23,3 +23,17 @@ var Passer = graphql.NewObject(
         },
     },
 )
+
+var Course = graphql.NewObject(
+    graphql.ObjectConfig{
+        Name: "Course",
+        Fields: graphql.Fields{
+            "id": &graphql.Field{
+                Type: graphql.Int,
+            },
+            "name": &graphql.Field{
+                Type: graphql.String,
+            },
+        },
+    },
+)

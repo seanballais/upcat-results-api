@@ -45,7 +45,13 @@ type Passer struct {
     Campus  string
 }
 
-// GetPassersByName is called within our passer query for GraphQL.
+
+type Course struct {
+    ID      int
+    Name    string
+}
+
+// GetPassers is called within our passer query for GraphQL.
 func (d *Db) GetPassers(name string, course string, campus string) []Passer {
     query := "SELECT passers.id, passers.name, courses.name, campuses.name "
     query += "FROM passers, courses, campuses "
@@ -99,22 +105,54 @@ func (d *Db) GetPassers(name string, course string, campus string) []Passer {
         fmt.Println("GetPassers Query Error: ", err)
     }
 
-    var r Passer
+    var p Passer
     passers := []Passer{}
     for rows.Next() {
         err = rows.Scan(
-            &r.ID,
-            &r.Name,
-            &r.Course,
-            &r.Campus,
+            &p.ID,
+            &p.Name,
+            &p.Course,
+            &p.Campus,
         )
 
         if err != nil {
-            fmt.Println("Error scanning rows: ", err)
+            fmt.Println("Error scanning Passer rows: ", err)
         }
 
-        passers = append(passers, r)
+        passers = append(passers, p)
     }
 
     return passers
+}
+
+func (d *Db) GetCourses() []Course {
+    query := "SELECT id, name FROM courses"
+
+    stmt, err := d.Prepare(query)
+    if err != nil {
+        fmt.Println("GetCourses Preparation Error: ", err)
+    }
+
+    rows, err := stmt.Query()
+    defer rows.Close()
+    if err != nil {
+        fmt.Println("GetCourses Query Error: ", err)
+    }
+
+    var c Course
+    courses := []Course{}
+    for rows.Next() {
+        err = rows.Scan(
+            &c.ID,
+            &c.Name,
+        )
+
+        if err != nil {
+            fmt.Println("Error scanning Course rows: ", err)
+        }
+
+        courses = append(courses, c)
+    }
+
+    return courses
 }

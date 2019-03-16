@@ -9,8 +9,7 @@ type Resolver struct {
     db *postgres.Db
 }
 
-// PasserResolver resolves our passer query through a DB call to
-// GetPassers
+// PasserResolver resolves our passer query through a DB call to GetPassers.
 func (r *Resolver) PasserResolver(p graphql.ResolveParams) (interface{}, error) {
     name, ok := p.Args["name"].(string)
     if !ok {
@@ -29,4 +28,10 @@ func (r *Resolver) PasserResolver(p graphql.ResolveParams) (interface{}, error) 
 
     passers := r.db.GetPassers(name, course, campus)
     return passers, nil
+}
+
+// CourseResolver resolves our course query through a DB call to GetCourses.
+func (r *Resolver) CourseResolver(p graphql.ResolveParams) (interface{}, error) {
+    courses := r.db.GetCourses()
+    return courses, nil
 }

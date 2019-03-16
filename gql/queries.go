@@ -26,6 +26,10 @@ func NewRoot(db *postgres.Db) *Root {
                         },
                         Resolve: resolver.PasserResolver,
                     },
+                    "courses": &graphql.Field{
+                        Type: graphql.NewList(Course),
+                        Resolve: resolver.CourseResolver,
+                    },
                 },
             },
         ),
