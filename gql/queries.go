@@ -23,6 +23,12 @@ func NewRoot(db *postgres.Db) *Root {
                             "name": &graphql.ArgumentConfig{
                                 Type: graphql.String,
                             },
+                            "course": &graphql.ArgumentConfig{
+                                Type: graphql.Int,
+                            },
+                            "campus": &graphql.ArgumentConfig{
+                                Type: graphql.Int,
+                            },
                         },
                         Resolve: resolver.PasserResolver,
                     },
@@ -32,7 +38,7 @@ func NewRoot(db *postgres.Db) *Root {
                     },
                     "campuses": &graphql.Field{
                         Type: graphql.NewList(Campus),
-                        Resolve: resolver.CampusResolver,
+                        Resolve: resolver.CampusResolver,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
                     },
                 },
             },
