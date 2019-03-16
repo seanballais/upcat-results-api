@@ -51,6 +51,11 @@ type Course struct {
     Name    string
 }
 
+type Campus struct {
+    ID      int
+    Name    string
+}
+
 // GetPassers is called within our passer query for GraphQL.
 func (d *Db) GetPassers(name string, course string, campus string) []Passer {
     query := "SELECT passers.id, passers.name, courses.name, campuses.name "
@@ -155,4 +160,36 @@ func (d *Db) GetCourses() []Course {
     }
 
     return courses
+}
+
+func (d *Db) GetCampuses() []Campus {
+    query := "SELECT id, name FROM campuses"
+
+    stmt, err := d.Prepare(query)
+    if err != nil {
+        fmt.Println("GetCampuses Preparation Error: ", err)
+    }
+
+    rows, err := stmt.Query()
+    defer rows.Close()
+    if err != nil {
+        fmt.Println("GetCampuses Query Error: ", err)
+    }
+
+    var c Campus
+    campuses := []Campus{}
+    for rows.Next() {
+        err = rows.Scan(
+            &c.ID,
+            &c.Name,
+        )
+
+        if err != nil {
+            fmt.Println("Error scanning Campus rows: ", err)
+        }
+
+        campuses = append(campuses, c)
+    }
+
+    return campuses
 }

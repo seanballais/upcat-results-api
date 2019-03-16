@@ -37,3 +37,17 @@ var Course = graphql.NewObject(
         },
     },
 )
+
+var Campus = graphql.NewObject(
+    graphql.ObjectConfig{
+        Name: "Campus",
+        Fields: graphql.Fields{
+            "id": &graphql.Field{
+                Type: graphql.Int,
+            },
+            "name": &graphql.Field{
+                Type: graphql.String,
+            },
+        },
+    },
+)

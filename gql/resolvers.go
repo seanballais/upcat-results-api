@@ -35,3 +35,9 @@ func (r *Resolver) CourseResolver(p graphql.ResolveParams) (interface{}, error) 
     courses := r.db.GetCourses()
     return courses, nil
 }
+
+// CampusResolver resolves our campus query through a DB call to GetCampuses.
+func (r *Resolver) CampusResolver(p graphql.ResolveParams) (interface{}, error) {
+    campuses := r.db.GetCampuses()
+    return campuses, nil
+}
