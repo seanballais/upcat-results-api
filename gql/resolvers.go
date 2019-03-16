@@ -10,13 +10,23 @@ type Resolver struct {
 }
 
 // PasserResolver resolves our passer query through a DB call to
-// GetPassersByName.
+// GetPassers
 func (r *Resolver) PasserResolver(p graphql.ResolveParams) (interface{}, error) {
     name, ok := p.Args["name"].(string)
-    if ok {
-        passers := r.db.GetPassersByName(name)
-        return passers, nil
+    if !ok {
+        name = ""
     }
 
-    return nil, nil
+    course, ok := p.Args["course"].(string)
+    if !ok {
+        course = ""
+    }
+
+    campus, ok := p.Args["campus"].(string)
+    if !ok {
+        campus = ""
+    }
+
+    passers := r.db.GetPassers(name, course, campus)
+    return passers, nil
 }

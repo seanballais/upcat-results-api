@@ -2,6 +2,7 @@ package postgres
 
 import (
     "fmt"
+    "strings"
     "database/sql"
 
     _ "github.com/lib/pq"
@@ -45,21 +46,61 @@ type Passer struct {
 }
 
 // GetPassersByName is called within our passer query for GraphQL.
-func (d *Db) GetPassersByName(name string) []Passer {
-    stmt, err := d.Prepare("SELECT id, name, course, campus FROM passers WHERE name LIKE '%' || $1 || '%'")
-    if err != nil {
-        fmt.Println("GetPassersByName Preparation Error: ", err)
+func (d *Db) GetPassers(name string, course string, campus string) []Passer {
+    query := "SELECT passers.id, passers.name, courses.name, campuses.name "
+    query += "FROM passers, courses, campuses "
+    query += "WHERE passers.course_id = courses.id "
+    query +=   "AND passers.campus_id = campuses.id"
+
+    // Generate the WHERE clause if there are passed parameters.
+    var whereClauses = make([]string, 0, 3)
+    var parameters = []interface{}{}
+    parameterCtr := 1
+
+    if name != "" {
+        clause := fmt.Sprintf("passers.name LIKE '%%' || $%d || '%%'",
+                              parameterCtr)
+        whereClauses = append(whereClauses, clause)
+        parameters = append(parameters, name)
+
+        parameterCtr++
     }
 
-    rows, err := stmt.Query(name)
+    if course != "" {
+        clause := fmt.Sprintf("passers.course_id=$%d", parameterCtr)
+        whereClauses = append(whereClauses, clause)
+        parameters = append(parameters, course)
+
+        parameterCtr++
+    }
+
+    if campus != "" {
+        clause := fmt.Sprintf("passers.campus_id=$%d", parameterCtr)
+        whereClauses = append(whereClauses, clause)
+        parameters = append(parameters, campus)
+
+        parameterCtr++
+    }
+
+    whereClause := strings.Join(whereClauses, " AND ")
+    if whereClause != "" {
+        query = fmt.Sprintf("%s AND %s", query, whereClause)
+    }
+
+    // Perform SQL query.
+    stmt, err := d.Prepare(query)
+    if err != nil {
+        fmt.Println("GetPassers Preparation Error: ", err)
+    }
+
+    rows, err := stmt.Query(parameters...)
     defer rows.Close()
     if err != nil {
-        fmt.Println("GetPassersByName Query Error: ", err)
+        fmt.Println("GetPassers Query Error: ", err)
     }
 
     var r Passer
     passers := []Passer{}
-
     for rows.Next() {
         err = rows.Scan(
             &r.ID,
