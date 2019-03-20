@@ -16,17 +16,22 @@ func (r *Resolver) PasserResolver(p graphql.ResolveParams) (interface{}, error) 
         name = ""
     }
 
-    course, ok := p.Args["course"].(string)
+    course, ok := p.Args["course"].(int)
     if !ok {
-        course = ""
+        course = 0
     }
 
-    campus, ok := p.Args["campus"].(string)
+    campus, ok := p.Args["campus"].(int)
     if !ok {
-        campus = ""
+        campus = 0
     }
 
-    passers := r.db.GetPassers(name, course, campus)
+    page_number, ok := p.Args["page_number"].(int)
+    if !ok {
+        page_number = 0
+    }
+
+    passers := r.db.GetPassers(name, course, campus, page_number)
     return passers, nil
 }
 
@@ -40,4 +45,24 @@ func (r *Resolver) CourseResolver(p graphql.ResolveParams) (interface{}, error) 
 func (r *Resolver) CampusResolver(p graphql.ResolveParams) (interface{}, error) {
     campuses := r.db.GetCampuses()
     return campuses, nil
+}
+
+func (r *Resolver) PassersMetadataResolver(p graphql.ResolveParams) (interface{}, error) {
+    name, ok := p.Args["name"].(string)
+    if !ok {
+        name = ""
+    }
+
+    course, ok := p.Args["course"].(int)
+    if !ok {
+        course = 0
+    }
+
+    campus, ok := p.Args["campus"].(int)
+    if !ok {
+        campus = 0
+    }
+
+    metadata := r.db.GetPassersMetadata(name, course, campus)
+    return metadata, nil
 }

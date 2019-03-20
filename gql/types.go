@@ -51,3 +51,14 @@ var Campus = graphql.NewObject(
         },
     },
 )
+
+var PassersMetadata = graphql.NewObject(
+    graphql.ObjectConfig{
+        Name: "PasserMetadata",
+        Fields: graphql.Fields{
+            "num_items": &graphql.Field{
+                Type: graphql.Int,
+            },
+        },
+    },
+)

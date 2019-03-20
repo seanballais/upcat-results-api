@@ -29,6 +29,9 @@ func NewRoot(db *postgres.Db) *Root {
                             "campus": &graphql.ArgumentConfig{
                                 Type: graphql.Int,
                             },
+                            "page_number": &graphql.ArgumentConfig{
+                                Type: graphql.Int,
+                            },
                         },
                         Resolve: resolver.PasserResolver,
                     },
@@ -39,6 +42,21 @@ func NewRoot(db *postgres.Db) *Root {
                     "campuses": &graphql.Field{
                         Type: graphql.NewList(Campus),
                         Resolve: resolver.CampusResolver,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+                    },
+                    "passers_metadata": &graphql.Field{
+                        Type: PassersMetadata,
+                        Args: graphql.FieldConfigArgument{
+                            "name": &graphql.ArgumentConfig{
+                                Type: graphql.String,
+                            },
+                            "course": &graphql.ArgumentConfig{
+                                Type: graphql.Int,
+                            },
+                            "campus": &graphql.ArgumentConfig{
+                                Type: graphql.Int,
+                            },
+                        },
+                        Resolve: resolver.PassersMetadataResolver,
                     },
                 },
             },
