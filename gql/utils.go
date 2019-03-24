@@ -4,9 +4,31 @@ import {
     "os"
     "fmt"
     "strings"
+    "encoding/json"
 
     "github.com/seanballais/upcat-results-api/postgres"
     "github.com/imroc/req"
+}
+
+type GPSCoordinatesLocation struct {
+    PlaceID     int    `json:"place_id"`
+    Licence     string `json:"licence"`
+    OsmType     string `json:"osm_type"`
+    OsmID       int    `json:"osm_id"`
+    Lat         string `json:"lat"`
+    Lon         string `json:"lon"`
+    DisplayName string `json:"display_name"`
+    Address     struct {
+        Residential string `json:"residential"`
+        Suburb      string `json:"suburb"`
+        City        string `json:"city"`
+        County      string `json:"county"`
+        State       string `json:"state"`
+        Postcode    string `json:"postcode"`
+        Country     string `json:"country"`
+        CountryCode string `json:"country_code"`
+    } `json:"address"`
+    Boundingbox []string `json:"boundingbox"`
 }
 
 func AddSearchQuery(name string, course_id int, campus_id int, userLocation string) {
@@ -18,12 +40,22 @@ func getUserLocation(userGPSLocation string, userIPAddress string) string {
     var db *postgres.Db
 
     if userGPSLocation != "" {
-        userLocation := strings.Split(userGPSLocation, ",")
-        userLatitude := userLocation[0].(float)
-        userLongitude := userLocation[1].(float)
+        gpsCoordinates := strings.Split(userGPSLocation, ",")
+        latitude := gpsCoordinates[0].(float)
+        longitude := gpsCoordinates[1].(float)
 
         geocoderURL = "https://nominatim.openstreetmap.org/reverse?format=json"
         geocoderURL = fmt.Sprintf("&lat=%f&lon=%f&zoom=18&addressdetails=1", userLatitude, userLongitude)
+        gpsLocationJSON = req.Get(geocoderURL)
+
+        var location GPSCoordinatesLocation
+        json.Unmarshal([]byte(gpsLocationJSON), &location)
+
+        city := location.Address.City
+        region := location.Address.State
+        country := location.Address.Country
+
+        userLocation = fmt.Sprintf("%s, %s, %s", city, region, country)
     } else {
         // We'll be using the IP address to get the location, since the user
         // did not want to share his/her location.
