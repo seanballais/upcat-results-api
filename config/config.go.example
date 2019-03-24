@@ -1,9 +1,0 @@
-package config
-
-// Temporary configuration.
-
-var DbName = "db_name"
-var DbHost = "localhost"
-var DbPort = 5432
-var DbUsername = "user"
-var DbPassword = "pass"

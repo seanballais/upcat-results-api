@@ -1,13 +1,12 @@
 package postgres
 
 import (
+    "os"
     "fmt"
     "strings"
     "database/sql"
 
     _ "github.com/lib/pq"
-
-    "github.com/seanballais/upcat-results-api/config"
 )
 
 type Db struct {
@@ -32,9 +31,15 @@ func New(connString string) (*Db, error) {
 
 // ConnString returns a connection string based on the parameters given in the config file (config.yaml).
 func CreateConnectionString() string {
+    dbName := os.Getenv('UPCAT_RESULTS_API_DB_NAME')
+    dbHost := os.Getenv('UPCAT_RESULTS_API_DB_HOST')
+    dbPort := os.Getenv('UPCAT_RESULTS_API_DB_PORT')
+    dbUsername := os.Getenv('UPCAT_RESULTS_API_DB_USERNAME')
+    dbPassword := os.Getenv('UPCAT_RESULTS_API_DB_PASSWORD')
+
     return fmt.Sprintf(
         "host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-        config.DbHost, config.DbPort, config.DbUsername, config.DbPassword, config.DbName,
+        dbHost, dbPort, dbUsername, dbPassword, dbName,
     )
 }
 
@@ -61,6 +66,10 @@ type PassersMetadata struct {
 
 // GetPassers is called within our passer query for GraphQL.
 func (d *Db) GetPassers(name string, course_id int, campus_id int, page_number int) []Passer {
+    // We should capitalize `name` first because the passers' names
+    // are capitalized in the database.
+    name = strings.ToUpper(name)
+
     query := "SELECT passers.id, passers.name, courses.name, campuses.name "
     query += "FROM passers, courses, campuses "
     query += "WHERE passers.course_id = courses.id "
@@ -263,13 +272,42 @@ func (d *Db) GetPassersMetadata(name string, course_id int, campus_id int) Passe
 
     var passersMetadata PassersMetadata
     rows.Next()
-    err = rows.Scan(
-        &passersMetadata.Num_items,
-    )
+    err = rows.Scan(&passersMetadata.Num_items)
 
     if err != nil {
         fmt.Println("Error scanning PassersMetadata row: ", err)
     }
 
     return passersMetadata
+}
+
+func (d *Db) GetCurrentMonthNumSearchQueries(computationMethod string) int {
+    query := "SELECT COUNT(*) FROM searchRequests "
+    query += "WHERE date_created == date_trunc('month', CURRENT_DATE) AND "
+
+    if computationMethod == "gps" {
+        query += "location_computed_via_gps"
+    } else {
+        query += "NOT location_computed_via_gps"
+    }
+
+    stmt, err := d.Prepare(query)
+    if err != nil {
+        fmt.Println("GetCurrentMonthNumSearchQueries Preparation Error: ", err)
+    }
+
+    rows, err := stmt.Query()
+    defer rows.Close()
+    if err != nil {
+        fmt.Println("GetCurrentMonthNumSearchQueries Query Error: ", err)
+    }
+
+    var numSearchQueries int
+    rows.Next()
+    err = rows.Scan(&numSearchQueries)
+    if err != nil {
+        fmt.Println('Error scanning GetCurrentMonthNumSearchQueries rows: ', err)
+    }
+
+    return numSearchQueries
 }

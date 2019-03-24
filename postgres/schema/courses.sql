@@ -1,4 +1,5 @@
 CREATE TABLE courses (
     id SERIAL PRIMARY KEY,
+    date_created TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     name TEXT NOT NULL UNIQUE
 );

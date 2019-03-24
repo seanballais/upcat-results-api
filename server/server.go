@@ -2,6 +2,7 @@ package server
 
 import (
     "encoding/json"
+    "net"
     "net/http"
 
     "github.com/seanballais/upcat-results-api/gql"
@@ -33,7 +34,36 @@ func (s *Server) GraphQL() http.HandlerFunc {
             http.Error(w, "Error parsing JSON request body.", 400)
         }
 
-        result := gql.ExecuteQuery(rBody.Query, *s.GqlSchema)
+        userIPAddress, _, err := net.SplitHostPort(r.RemoteAddr)
+        if err != nil {
+            fmt.Printf("%q is not in the format: <IP address>:<port>", r.RemoteAddr)
+        }
+
+        // TODO: Preprocess userGPS location, or send an error message
+        //       when the GPS location is sent in the wrong format. The
+        //       format should be: (latitude, longitude).
+
+        rootValue := map[string]interface() {
+            // Adding in `response` and `request` so that `userLocation` does
+            // not feel lonely. Additionally, this is to make this look more
+            // akin to a standard HTTP header.
+            "response":         w,
+            "request":          r,
+            "userGPSLocation":  r.Header.Get("SNB-User-GPS-Location"),
+            "userIPAddress":    userIPAddress
+        }
+
+        params := graphql.Params{
+                Schema:         schema,
+                RequestString:  query,
+                RootObject:     rootValue,
+        }
+        result := graphql.Do(params)
+
+        if len(result.Errors) > 0 {
+            fmt.Printf("Unexpected errors inside ExecuteQuery: %v", result.Errors)
+        }
+
         render.JSON(w, r, result)
     }
 }

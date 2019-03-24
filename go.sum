@@ -21,6 +21,8 @@ github.com/gravitational/configure v0.0.0-20180808141939-c3428bd84c23 h1:havbccu
 github.com/gravitational/configure v0.0.0-20180808141939-c3428bd84c23/go.mod h1:XL9nebvlfNVvRzRPWdDcWootcyA0l7THiH/A+W1233g=
 github.com/gravitational/trace v0.0.0-20180717152918-4a5e142f3251 h1:wvLRc9hG1+3qE4rVa/qAkcgxcdznlyo9DyAahNo9AUs=
 github.com/gravitational/trace v0.0.0-20180717152918-4a5e142f3251/go.mod h1:RvdOUHE4SHqR3oXlFFKnGzms8a5dugHygGw1bqDstYI=
+github.com/imroc/req v0.2.3 h1:ElMCifcqg/1GonGloyyTUrj6D6IITL6EiNEKHUl4xZM=
+github.com/imroc/req v0.2.3/go.mod h1:J9FsaNHDTIVyW/b5r6/Df5qKEEEq2WzZKIgKSajd1AE=
 github.com/jonboulle/clockwork v0.1.0 h1:VKV+ZcuP6l3yW9doeqz6ziZGgcynBVQO+obU0+0hcPo=
 github.com/jonboulle/clockwork v0.1.0/go.mod h1:Ii8DK3G1RaLaWxj9trq07+26W01tbo22gdxWY5EU2bo=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
@@ -39,6 +41,8 @@ github.com/oxequa/interact v0.0.0-20171114182912-f8fb5795b5d7/go.mod h1:lYzYp3DJ
 github.com/oxequa/realize v2.0.2+incompatible h1:R+Rg8R+gyuWP8oqvFpaJMzdcFF0vy15zjEAGAiuc8pQ=
 github.com/oxequa/realize v2.0.2+incompatible/go.mod h1:Bqw5jC78Eh70s7/rryEaVPwps/kYdPxBWTZDE+6x0/8=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/ryankurte/go-mapbox v0.4.2 h1:wHrD3D/v4kgjaqKj5eKTAMUUagAi9ozj1NJG4t4k5gU=
+github.com/ryankurte/go-mapbox v0.4.2/go.mod h1:yufQe+kcJZdaVz1yq8wxE+Ye1PATnQ17sxtDUSL1WOo=
 github.com/satori/go.uuid v1.2.0 h1:0uYX9dsZ2yD7q2RtLRtPSdGDWzjeM3TbMJP9utgA0ww=
 github.com/satori/go.uuid v1.2.0/go.mod h1:dA0hQrYB0VpLJoorglMZABFdXlWrHn1NEOzdhQKdks0=
 github.com/sirupsen/logrus v1.2.0 h1:juTguoYk5qI21pwyTXY3B3Y5cOTH3ZUyZCg1v/mihuo=
@@ -58,6 +62,8 @@ golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5h
 gopkg.in/alecthomas/kingpin.v2 v2.2.6 h1:jMFz6MfLP0/4fUyZle81rXUoxOBFi19VUFKVDOQfozc=
 gopkg.in/alecthomas/kingpin.v2 v2.2.6/go.mod h1:FMv+mEhP44yOT+4EoQTLFTRgOQ1FBLkstjWtayDeSgw=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+gopkg.in/ryankurte/go-mapbox.v0 v0.4.2 h1:i3wBfUnTxI7NNg4BiatUAzSAzfA9Cxpc0WWhOHBCMQg=
+gopkg.in/ryankurte/go-mapbox.v0 v0.4.2/go.mod h1:HxwTAU0Ia8hfMMhlohUGyCbjSJwSzQYaZ4dmJSCEuiE=
 gopkg.in/urfave/cli.v2 v2.0.0-20180128182452-d3ae77c26ac8 h1:Ggy3mWN4l3PUFPfSG0YB3n5fVYggzysUmiUQ89SnX6Y=
 gopkg.in/urfave/cli.v2 v2.0.0-20180128182452-d3ae77c26ac8/go.mod h1:cKXr3E0k4aosgycml1b5z33BVV6hai1Kh7uDgFOkbcs=
 gopkg.in/yaml.v2 v2.2.2 h1:ZCJp+EgiOT7lHqUV2J862kp8Qj64Jo6az82+3Td9dZw=
