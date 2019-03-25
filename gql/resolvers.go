@@ -35,7 +35,15 @@ func (r *Resolver) PasserResolver(p graphql.ResolveParams) (interface{}, error) 
 
     // Add the search request to the database.
     rootValue := p.Info.RootValue.(map[string]interface{})
-    userLocation := GetUserLocation(rootValue["userGPSLocation"], rootValue["userIPAddress"])
+    userLocationID := GetUserLocationID(rootValue["userGPSLocation"].(string),
+                                        rootValue["userIPAddress"].(string))
+
+    isLocationComputedViaGPS := true
+    if rootValue["userGPSLocation"] == "" {
+        isLocationComputedViaGPS = false
+    }
+
+    r.db.AddSearchQuery(name, course, campus, page_number, userLocationID, isLocationComputedViaGPS)
 
     return passers, nil
 }

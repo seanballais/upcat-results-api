@@ -1,16 +1,17 @@
-package qgl
+package gql
 
-import {
+import (
     "os"
     "fmt"
     "strings"
+    "strconv"
     "encoding/json"
 
     "github.com/imroc/req"
     "github.com/harwoeck/ipstack"
 
     "github.com/seanballais/upcat-results-api/postgres"
-}
+)
 
 type GPSCoordinatesLocation struct {
     PlaceID     int    `json:"place_id"`
@@ -33,18 +34,19 @@ type GPSCoordinatesLocation struct {
     Boundingbox []string `json:"boundingbox"`
 }
 
-func getUserLocationID(userGPSLocation string, userIPAddress string) int {
+func GetUserLocationID(userGPSLocation string, userIPAddress string) int {
     var db *postgres.Db
     var userLocationID int
 
     if userGPSLocation != "" {
         gpsCoordinates := strings.Split(userGPSLocation, ",")
-        latitude := gpsCoordinates[0].(float)
-        longitude := gpsCoordinates[1].(float)
+        latitude, _ := strconv.ParseFloat(gpsCoordinates[0], 32)
+        longitude, _ := strconv.ParseFloat(gpsCoordinates[1], 32)
 
-        geocoderURL = "https://nominatim.openstreetmap.org/reverse?format=json"
-        geocoderURL = fmt.Sprintf("&lat=%f&lon=%f&zoom=18&addressdetails=1", userLatitude, userLongitude)
-        gpsLocationJSON = req.Get(geocoderURL)
+        geocoderURL := "https://nominatim.openstreetmap.org/reverse?format=json"
+        geocoderURL += fmt.Sprintf("&lat=%f&lon=%f&zoom=18&addressdetails=1", latitude, longitude)
+        response, _ := req.Get(geocoderURL)
+        gpsLocationJSON := response.String()
 
         var location GPSCoordinatesLocation
         json.Unmarshal([]byte(gpsLocationJSON), &location)
@@ -58,11 +60,9 @@ func getUserLocationID(userGPSLocation string, userIPAddress string) int {
     } else {
         // We'll be using the IP address to get the location, since the user
         // did not want to share his/her location.
-        if numSearchQueries == "" {
-           fmt.Println("User did not want to share his/her location. Switching to computing the location via IP Address.")
-        }
+        fmt.Println("User did not want to share his/her location. Switching to computing the location via IP Address.")
 
-        numIPAddresses = db.GetCurrentMonthMappedIPAddresses()
+        numIPAddresses := db.GetCurrentMonthMappedIPAddresses()
         if numIPAddresses < 9900 {
             // Since we have only have 10,000 consumable API calls per month,
             // we're going to put a cap of 9,900 on the number of API calls we
@@ -72,7 +72,7 @@ func getUserLocationID(userGPSLocation string, userIPAddress string) int {
             } else {
                 // Cache the IP address if we haven't already.
                 ipStackKey := os.Getenv("UPCAT_RESULTS_API_IPSTACK_API_KEY")
-                ipStackClient := ipstack.Client.NewClient(ipStackKey, true, 30)
+                ipStackClient := ipstack.NewClient(ipStackKey, true, 30)
                 ipStackResp, err := ipStackClient.Check(userIPAddress)
                 if err != nil {
                     fmt.Println("IP Stack Client Error: ", err)
@@ -89,7 +89,7 @@ func getUserLocationID(userGPSLocation string, userIPAddress string) int {
             }
         } else {
             fmt.Println("Exceeded allowable calls to IPStack. Setting location to raw GPS coordinates.")
-            userLocationID = fmt.Sprintf("(%s)", userIPAddress)
+            userLocationID = db.AddLocation(fmt.Sprintf("(%s)", userIPAddress))
         }
     }
 

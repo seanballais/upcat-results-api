@@ -31,14 +31,14 @@ func New(connString string) (*Db, error) {
 
 // ConnString returns a connection string based on the parameters given in the config file (config.yaml).
 func CreateConnectionString() string {
-    dbName := os.Getenv('UPCAT_RESULTS_API_DB_NAME')
-    dbHost := os.Getenv('UPCAT_RESULTS_API_DB_HOST')
-    dbPort := os.Getenv('UPCAT_RESULTS_API_DB_PORT')
-    dbUsername := os.Getenv('UPCAT_RESULTS_API_DB_USERNAME')
-    dbPassword := os.Getenv('UPCAT_RESULTS_API_DB_PASSWORD')
+    dbName := os.Getenv("UPCAT_RESULTS_API_DB_NAME")
+    dbHost := os.Getenv("UPCAT_RESULTS_API_DB_HOST")
+    dbPort := os.Getenv("UPCAT_RESULTS_API_DB_PORT")
+    dbUsername := os.Getenv("UPCAT_RESULTS_API_DB_USERNAME")
+    dbPassword := os.Getenv("UPCAT_RESULTS_API_DB_PASSWORD")
 
     return fmt.Sprintf(
-        "host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+        "host=%s port=%d user=%s password=%s dbname=%s",
         dbHost, dbPort, dbUsername, dbPassword, dbName,
     )
 }
@@ -322,7 +322,7 @@ func (d *Db) IsIPAddressCached(ipAddress string) bool {
     }
 
     var numIPAddresses int
-    rows.next()
+    rows.Next()
     err = rows.Scan(&numIPAddresses)
     if err != nil {
         fmt.Println("Error scanning IsIPAddressCached rows: ", err)
@@ -347,7 +347,7 @@ func (d *Db) GetIPAddressLocationID(ipAddress string) int {
     }
 
     var locationID int
-    rows.next()
+    rows.Next()
     err = rows.Scan(&locationID)
     if err != nil {
         fmt.Println("Error scanning GetIPAddressLocationID rows: ", err)
@@ -387,7 +387,7 @@ func (d *Db) AddLocation(location string) int {
     }
 
     var locationID int
-    rows.next()
+    rows.Next()
     err = rows.Scan(&locationID)
     if err != nil {
         fmt.Println("Error scanning AddLocation rows: ", err)
@@ -396,9 +396,43 @@ func (d *Db) AddLocation(location string) int {
     return locationID
 }
 
-func (d *Db) AddSearchQuery(name string, course_id int, campus_id int,
-                            userLocation string, userIPAddress string) {
-    query := "INSERT INTO searchRequests(name, course_id, campus_id, "
+func (d *Db) AddSearchQuery(name string, course_id int, campus_id int, page_number int,
+                            location_id int, isLocationComputedViaGPS bool) {
+    query := "INSERT INTO searchRequests(name, course_id, campus_id, page_number,"
     query += "location_id, location_computed_via_gps) "
-    query +=     
+    query += "VALUES($1, $2, $3, $4, $5, $6)"
+
+    var parameters = []interface{}{}
+
+    if name != "" {
+        parameters = append(parameters, name)
+    } else {
+        parameters = append(parameters, nil)
+    }
+
+    if course_id != 0 {
+        parameters = append(parameters, course_id)
+    } else {
+        parameters = append(parameters, nil)
+    }
+
+    if campus_id != 0 {
+        parameters = append(parameters, campus_id)
+    } else {
+        parameters = append(parameters, nil)
+    }
+
+    parameters = append(parameters, location_id)
+    parameters = append(parameters, isLocationComputedViaGPS)
+
+    stmt, err := d.Prepare(query)
+    if err != nil {
+        fmt.Println("AddSearchQuery Preparation Error: ", err)
+    }
+
+    rows, err := stmt.Query(parameters...)
+    defer rows.Close()
+    if err != nil {
+        fmt.Println("AddSearchQuery Query Error: ", err)
+    }
 }

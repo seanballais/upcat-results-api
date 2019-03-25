@@ -1,6 +1,7 @@
 package server
 
 import (
+    "fmt"
     "encoding/json"
     "net"
     "net/http"
@@ -43,26 +44,22 @@ func (s *Server) GraphQL() http.HandlerFunc {
         //       when the GPS location is sent in the wrong format. The
         //       format should be: (latitude, longitude).
 
-        rootValue := map[string]interface() {
+        rootValue := map[string]interface{} {
             // Adding in `response` and `request` so that `userLocation` does
             // not feel lonely. Additionally, this is to make this look more
             // akin to a standard HTTP header.
             "response":         w,
             "request":          r,
             "userGPSLocation":  r.Header.Get("SNB-User-GPS-Location"),
-            "userIPAddress":    userIPAddress
+            "userIPAddress":    userIPAddress,
         }
 
         params := graphql.Params{
-                Schema:         schema,
-                RequestString:  query,
+                Schema:         *s.GqlSchema,
+                RequestString:  rBody.Query,
                 RootObject:     rootValue,
         }
-        result := graphql.Do(params)
-
-        if len(result.Errors) > 0 {
-            fmt.Printf("Unexpected errors inside ExecuteQuery: %v", result.Errors)
-        }
+        result := gql.ExecuteQuery(params)
 
         render.JSON(w, r, result)
     }
