@@ -6,7 +6,6 @@ import (
     "net"
     "net/http"
 
-    "github.com/seanballais/upcat-results-api/gql"
     "github.com/go-chi/render"
     "github.com/graphql-go/graphql"
 )
@@ -59,7 +58,11 @@ func (s *Server) GraphQL() http.HandlerFunc {
                 RequestString:  rBody.Query,
                 RootObject:     rootValue,
         }
-        result := gql.ExecuteQuery(params)
+        result := graphql.Do(params)
+
+        if len(result.Errors) > 0 {
+            fmt.Printf("Unexpected errors inside ExecuteQuery: %v", result.Errors)
+        }
 
         render.JSON(w, r, result)
     }

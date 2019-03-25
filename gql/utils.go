@@ -35,7 +35,12 @@ type GPSCoordinatesLocation struct {
 }
 
 func GetUserLocationID(userGPSLocation string, userIPAddress string) int {
-    var db *postgres.Db
+    dbConnectionString := postgres.CreateConnectionString()
+    db, err := postgres.New(dbConnectionString)
+    if err != nil {
+        fmt.Println("GetUserLocationID Db instance creation error: ", err)
+    }
+
     var userLocationID int
 
     if userGPSLocation != "" {
