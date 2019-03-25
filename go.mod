@@ -12,6 +12,7 @@ require (
 	github.com/graphql-go/graphql v0.7.7
 	github.com/gravitational/configure v0.0.0-20180808141939-c3428bd84c23 // indirect
 	github.com/gravitational/trace v0.0.0-20180717152918-4a5e142f3251 // indirect
+	github.com/harwoeck/ipstack v0.1.0 // indirect
 	github.com/imroc/req v0.2.3 // indirect
 	github.com/jonboulle/clockwork v0.1.0 // indirect
 	github.com/labstack/echo v3.3.5+incompatible // indirect

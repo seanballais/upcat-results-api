@@ -281,33 +281,124 @@ func (d *Db) GetPassersMetadata(name string, course_id int, campus_id int) Passe
     return passersMetadata
 }
 
-func (d *Db) GetCurrentMonthNumSearchQueries(computationMethod string) int {
-    query := "SELECT COUNT(*) FROM searchRequests "
+func (d *Db) GetCurrentMonthMappedIPAddresses() int {
+    query := "SELECT COUNT(*) FROM ipAddressLocations "
     query += "WHERE date_created == date_trunc('month', CURRENT_DATE) AND "
-
-    if computationMethod == "gps" {
-        query += "location_computed_via_gps"
-    } else {
-        query += "NOT location_computed_via_gps"
-    }
 
     stmt, err := d.Prepare(query)
     if err != nil {
-        fmt.Println("GetCurrentMonthNumSearchQueries Preparation Error: ", err)
+        fmt.Println("GetCurrentMonthMappedIPAddresses Preparation Error: ", err)
     }
 
     rows, err := stmt.Query()
     defer rows.Close()
     if err != nil {
-        fmt.Println("GetCurrentMonthNumSearchQueries Query Error: ", err)
+        fmt.Println("GetCurrentMonthMappedIPAddresses Query Error: ", err)
     }
 
-    var numSearchQueries int
+    var numIPAddresses int
     rows.Next()
-    err = rows.Scan(&numSearchQueries)
+    err = rows.Scan(&numIPAddresses)
     if err != nil {
-        fmt.Println('Error scanning GetCurrentMonthNumSearchQueries rows: ', err)
+        fmt.Println("Error scanning GetCurrentMonthMappedIPAddresses rows: ", err)
     }
 
-    return numSearchQueries
+    return numIPAddresses
+}
+
+func (d *Db) IsIPAddressCached(ipAddress string) bool {
+    query := "SELECT COUNT(*) FROM ipAddressLocations "
+    query += "WHERE ip_address=$1"
+
+    stmt, err := d.Prepare(query)
+    if err != nil {
+        fmt.Println("IsIPAddressCached Preparation Error: ", err)
+    }
+
+    rows, err := stmt.Query()
+    defer rows.Close()
+    if err != nil {
+        fmt.Println("IsIPAddressCached Query Error: ", err)
+    }
+
+    var numIPAddresses int
+    rows.next()
+    err = rows.Scan(&numIPAddresses)
+    if err != nil {
+        fmt.Println("Error scanning IsIPAddressCached rows: ", err)
+    }
+
+    return numIPAddresses > 0
+}
+
+func (d *Db) GetIPAddressLocationID(ipAddress string) int {
+    query := "SELECT location_id FROM ipAddressLocations "
+    query += "WHERE ip_address=$1"
+
+    stmt, err := d.Prepare(query)
+    if err != nil {
+        fmt.Println("GetIPAddressLocationID Preparation Error: ", err)
+    }
+
+    rows, err := stmt.Query()
+    defer rows.Close()
+    if err != nil {
+        fmt.Println("GetIPAddressLocationID Query Error: ", err)
+    }
+
+    var locationID int
+    rows.next()
+    err = rows.Scan(&locationID)
+    if err != nil {
+        fmt.Println("Error scanning GetIPAddressLocationID rows: ", err)
+    }
+
+    return locationID
+}
+
+func (d *Db) AddIPAddressLocationMapping(ip_address string, location_id int) {
+    query := "INSERT INTO ipAddressLocations(ip_address, location_id) "
+    query += "VALUES($1, $2)"
+
+    stmt, err := d.Prepare(query)
+    if err != nil {
+        fmt.Println("AddIPAddressLocationMapping Preparation Error: ", err)
+    }
+
+    rows, err := stmt.Query(ip_address, location_id)
+    defer rows.Close()
+    if err != nil {
+        fmt.Println("AddIPAddressLocationMapping Query Error: ", err)
+    }
+}
+
+func (d *Db) AddLocation(location string) int {
+    query := "INSERT INTO locations(name) VALUES($1) RETURNING id"
+
+    stmt, err := d.Prepare(query)
+    if err != nil {
+        fmt.Println("AddLocation Preparation Error: ", err)
+    }
+
+    rows, err := stmt.Query(location)
+    defer rows.Close()
+    if err != nil {
+        fmt.Println("AddLocation Query Error: ", err)
+    }
+
+    var locationID int
+    rows.next()
+    err = rows.Scan(&locationID)
+    if err != nil {
+        fmt.Println("Error scanning AddLocation rows: ", err)
+    }
+
+    return locationID
+}
+
+func (d *Db) AddSearchQuery(name string, course_id int, campus_id int,
+                            userLocation string, userIPAddress string) {
+    query := "INSERT INTO searchRequests(name, course_id, campus_id, "
+    query += "location_id, location_computed_via_gps) "
+    query +=     
 }

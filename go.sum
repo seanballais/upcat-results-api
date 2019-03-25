@@ -21,6 +21,8 @@ github.com/gravitational/configure v0.0.0-20180808141939-c3428bd84c23 h1:havbccu
 github.com/gravitational/configure v0.0.0-20180808141939-c3428bd84c23/go.mod h1:XL9nebvlfNVvRzRPWdDcWootcyA0l7THiH/A+W1233g=
 github.com/gravitational/trace v0.0.0-20180717152918-4a5e142f3251 h1:wvLRc9hG1+3qE4rVa/qAkcgxcdznlyo9DyAahNo9AUs=
 github.com/gravitational/trace v0.0.0-20180717152918-4a5e142f3251/go.mod h1:RvdOUHE4SHqR3oXlFFKnGzms8a5dugHygGw1bqDstYI=
+github.com/harwoeck/ipstack v0.1.0 h1:w+UiyXqMrIvy1UIv82oQAU/56gRVdDRw5Y0QnI/p1z4=
+github.com/harwoeck/ipstack v0.1.0/go.mod h1:ERtdkCUOwLzao/npVAJ4AmrrIUnvF1oO5CBSxdjxAIg=
 github.com/imroc/req v0.2.3 h1:ElMCifcqg/1GonGloyyTUrj6D6IITL6EiNEKHUl4xZM=
 github.com/imroc/req v0.2.3/go.mod h1:J9FsaNHDTIVyW/b5r6/Df5qKEEEq2WzZKIgKSajd1AE=
 github.com/jonboulle/clockwork v0.1.0 h1:VKV+ZcuP6l3yW9doeqz6ziZGgcynBVQO+obU0+0hcPo=
