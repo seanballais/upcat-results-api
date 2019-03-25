@@ -284,7 +284,7 @@ func (d *Db) GetPassersMetadata(name string, course_id int, campus_id int) Passe
 
 func (d *Db) GetCurrentMonthMappedIPAddresses() int {
     query := "SELECT COUNT(*) FROM ipAddressLocations "
-    query += "WHERE date_created == date_trunc('month', CURRENT_DATE)"
+    query += "WHERE EXTRACT(MONTH FROM date_created) = EXTRACT(MONTH FROM CURRENT_DATE)"
 
     stmt, err := d.Prepare(query)
     if err != nil {
@@ -316,7 +316,7 @@ func (d *Db) IsIPAddressCached(ipAddress string) bool {
         fmt.Println("IsIPAddressCached Preparation Error: ", err)
     }
 
-    rows, err := stmt.Query()
+    rows, err := stmt.Query(ipAddress)
     defer rows.Close()
     if err != nil {
         fmt.Println("IsIPAddressCached Query Error: ", err)
@@ -341,7 +341,7 @@ func (d *Db) GetIPAddressLocationID(ipAddress string) int {
         fmt.Println("GetIPAddressLocationID Preparation Error: ", err)
     }
 
-    rows, err := stmt.Query()
+    rows, err := stmt.Query(ipAddress)
     defer rows.Close()
     if err != nil {
         fmt.Println("GetIPAddressLocationID Query Error: ", err)

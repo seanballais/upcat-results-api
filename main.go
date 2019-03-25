@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -20,7 +21,8 @@ func main() {
 	router, db := initializeAPI()
 	defer db.Close()
 
-	log.Fatal(http.ListenAndServe(":9000", router))
+	port := fmt.Sprintf(":%s", os.Getenv("UPCAT_RESULTS_API_PORT"))
+	log.Fatal(http.ListenAndServe(port, router))
 }
 
 func initializeAPI() (*chi.Mux, *postgres.Db) {
