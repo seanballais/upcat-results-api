@@ -4,6 +4,7 @@ import (
     "os"
     "fmt"
     "strings"
+    "strconv"
     "database/sql"
 
     _ "github.com/lib/pq"
@@ -33,7 +34,7 @@ func New(connString string) (*Db, error) {
 func CreateConnectionString() string {
     dbName := os.Getenv("UPCAT_RESULTS_API_DB_NAME")
     dbHost := os.Getenv("UPCAT_RESULTS_API_DB_HOST")
-    dbPort := os.Getenv("UPCAT_RESULTS_API_DB_PORT")
+    dbPort, _ := strconv.ParseUint(os.Getenv("UPCAT_RESULTS_API_DB_PORT"), 10, 16)
     dbUsername := os.Getenv("UPCAT_RESULTS_API_DB_USERNAME")
     dbPassword := os.Getenv("UPCAT_RESULTS_API_DB_PASSWORD")
 
