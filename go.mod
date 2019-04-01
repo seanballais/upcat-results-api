@@ -7,6 +7,7 @@ require (
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/go-chi/chi v3.3.3+incompatible
+	github.com/go-chi/cors v1.0.0
 	github.com/go-chi/render v1.0.1
 	github.com/go-siris/siris v7.4.0+incompatible // indirect
 	github.com/graphql-go/graphql v0.7.7
@@ -22,6 +23,7 @@ require (
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/oxequa/interact v0.0.0-20171114182912-f8fb5795b5d7 // indirect
 	github.com/oxequa/realize v2.0.2+incompatible // indirect
+	github.com/rs/cors v1.6.0 // indirect
 	github.com/ryankurte/go-mapbox v0.4.2 // indirect
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.2.0 // indirect

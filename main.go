@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
 	"github.com/graphql-go/graphql"
 	"github.com/seanballais/upcat-results-api/gql"
@@ -45,12 +46,23 @@ func initializeAPI() (*chi.Mux, *postgres.Db) {
 		GqlSchema: &sc,
 	}
 
+	// Enable CORS.
+	cors := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"POST", "OPTIONS"},
+    	AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+    	ExposedHeaders:   []string{"Link"},
+    	AllowCredentials: true,
+    	MaxAge:           300,
+	})
+
 	router.Use(
 		render.SetContentType(render.ContentTypeJSON),
 		middleware.Logger,
 		middleware.DefaultCompress,
 		middleware.StripSlashes,
 		middleware.Recoverer,
+		cors.Handler,
 	)
 
 	router.Post("/graphql", gqlServer.GraphQL())
